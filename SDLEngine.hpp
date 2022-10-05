@@ -223,6 +223,7 @@ void SDLEngine::mudarStretch (StretchCanvas scretch)
 {
     _scretchCanvas = scretch;
     SDL_FillRect( _surfaceScreen, nullptr, A_MASK );
+    atualizarProporcaoImagem();
     copiarCanvas();
 }
 
@@ -245,6 +246,7 @@ void SDLEngine::mudarCanvas ( uint novaLargura, uint novaAltura )
                                              , 32, 4 * novaLargura
                                              , R_MASK, G_MASK, B_MASK, A_MASK );
     _rectCanvas = &( _surfaceCanvas->clip_rect );
+    atualizarProporcaoImagem();
 }
 
 //*******************************************************************
@@ -266,6 +268,7 @@ void SDLEngine::junelaMudouTamanho ( const SDL_Event &e )
         {
             atualizarJanelaSurface();
             SDL_FillRect( _surfaceScreen, nullptr, A_MASK );
+            atualizarProporcaoImagem();
             copiarCanvas();
         }
     }
@@ -324,12 +327,12 @@ void SDLEngine::atualizarProporcaoImagem ()
 
 void SDLEngine::copiarCanvas ()
 {
-    atualizarProporcaoImagem();
+    SDL_Rect imgRect = _imagem;
     
     if ( _scretchCanvas == StretchCanvas::NO_STRETCH )
-        SDL_BlitSurface( _surfaceCanvas, nullptr, _surfaceScreen, &_imagem );
+        SDL_BlitSurface( _surfaceCanvas, nullptr, _surfaceScreen, &imgRect );
     else
-        SDL_BlitScaled( _surfaceCanvas, nullptr, _surfaceScreen, &_imagem );
+        SDL_BlitScaled( _surfaceCanvas, nullptr, _surfaceScreen, &imgRect );
     
 }
 

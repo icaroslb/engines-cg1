@@ -57,6 +57,7 @@ class PygameEngine:
         self._rectWindow = self._window.get_rect()
         self._rectImagem = pygame.Rect( ( 0, 0 ), ( 0, 0 ) )
         self.imagemProporcao = self._rectImagem.copy()
+        self._canvas = None
 
 ##*******************************************************************
 ##*******************************************************************
@@ -67,8 +68,16 @@ class PygameEngine:
     #  Atualiza as cores do canvas a partir de uma classe de imagem da bilioteca Pillow
     #
     def atualizarCanvasPIL ( self, novoCanvas ):
+        if ( self._canvas != None ):
+            del self._canvas
+        
         self._canvas = pygame.image.fromstring( novoCanvas.tobytes(), novoCanvas.size, novoCanvas.mode )
+        rectCanvasAnterior = self._rectCanvas.copy()
         self._rectCanvas = self._canvas.get_rect()
+        
+        if ( rectCanvasAnterior.w != self._rectCanvas.w
+        or   rectCanvasAnterior.h != self._rectCanvas.h ):
+            self.atualizarProporcaoImagem()
 
 ##*******************************************************************
 ##*******************************************************************
@@ -79,8 +88,16 @@ class PygameEngine:
     #  Atualiza as cores do canvas a partir de um array numpy
     #
     def atualizarCanvasNP ( self, novoCanvas ):
+        if ( self._canvas != None ):
+            del self._canvas
+        
         self._canvas = pygame.surfarray.make_surface( novoCanvas )
+        rectCanvasAnterior = self._rectCanvas.copy()
         self._rectCanvas = self._canvas.get_rect()
+        
+        if ( rectCanvasAnterior.w != self._rectCanvas.w
+        or   rectCanvasAnterior.h != self._rectCanvas.h ):
+            self.atualizarProporcaoImagem()
 
 ##*******************************************************************
 ##*******************************************************************
@@ -92,6 +109,7 @@ class PygameEngine:
     #
     def mudarStretch ( self, scretch ):
         self._scretchCanvas = scretch
+        self.atualizarProporcaoImagem()
 
 ##*******************************************************************
 ##*******************************************************************
@@ -106,6 +124,7 @@ class PygameEngine:
             self.window = pygame.display.set_mode( ( e.w, e.h )
                                                  , pygame.RESIZABLE )
             self._rectWindow = self._window.get_rect()
+            self.atualizarProporcaoImagem()
 
 ##*******************************************************************
 ##*******************************************************************
@@ -114,23 +133,24 @@ class PygameEngine:
     #  Calcula as proporções da imagem
     #
     def atualizarProporcaoImagem ( self ):
-        rectScreen = pygame.display.get_surface().get_rect()
-        rectCanvas = self._canvas.get_rect()
+        if ( self._canvas != None ):
+            rectScreen = pygame.display.get_surface().get_rect()
+            rectCanvas = self._canvas.get_rect()
 
-        if ( self._scretchCanvas == StretchCanvas.NO_STRETCH ):
-            self._rectImagem = rectCanvas
-        elif ( self._scretchCanvas == StretchCanvas.FULL ):
-            self._rectImagem = rectScreen
-        elif ( self._scretchCanvas == StretchCanvas.SMALLER_BORDER ):
-            if ( rectCanvas.w < rectCanvas.h ):   self.stretchProporcaoLargura( self._rectImagem )
-            elif ( rectCanvas.w > rectCanvas.h ): self.stretchProporcaoAltura( self._rectImagem )
-            else:                                 self._rectImagem = rectCanvas
-        elif ( self._scretchCanvas == StretchCanvas.LARGER_BORDER ):
-            if ( rectCanvas.w > rectCanvas.h ):   self.stretchProporcaoLargura( self._rectImagem )
-            elif ( rectCanvas.w < rectCanvas.h ): self.stretchProporcaoAltura( self._rectImagem )
-            else:                                 self._rectImagem = rectCanvas
-        
-        self.imagemProporcao = self._rectImagem.copy()
+            if ( self._scretchCanvas == StretchCanvas.NO_STRETCH ):
+                self._rectImagem = rectCanvas
+            elif ( self._scretchCanvas == StretchCanvas.FULL ):
+                self._rectImagem = rectScreen
+            elif ( self._scretchCanvas == StretchCanvas.SMALLER_BORDER ):
+                if ( rectCanvas.w < rectCanvas.h ):   self.stretchProporcaoLargura( self._rectImagem )
+                elif ( rectCanvas.w > rectCanvas.h ): self.stretchProporcaoAltura( self._rectImagem )
+                else:                                 self._rectImagem = rectCanvas
+            elif ( self._scretchCanvas == StretchCanvas.LARGER_BORDER ):
+                if ( rectCanvas.w > rectCanvas.h ):   self.stretchProporcaoLargura( self._rectImagem )
+                elif ( rectCanvas.w < rectCanvas.h ): self.stretchProporcaoAltura( self._rectImagem )
+                else:                                 self._rectImagem = rectCanvas
+
+            self.imagemProporcao = self._rectImagem.copy()
 
 ##*******************************************************************
 ##*******************************************************************
@@ -141,9 +161,10 @@ class PygameEngine:
     def atualizarJanela ( self ):
         self._window.fill( ( 0.0, 0.0, 0.0 ) )
         
-        self.atualizarProporcaoImagem()
-        self._window.blit( pygame.transform.scale( self._canvas, self._rectImagem.size )
-                         , self._rectImagem )
+        imgRect = self._rectImagem.copy()
+        if ( self._canvas != None ):
+            self._window.blit( pygame.transform.scale( self._canvas, imgRect.size )
+                             , imgRect )
         
         pygame.display.update()
 
@@ -153,6 +174,7 @@ class PygameEngine:
     #! stretchProporcaoLargura
     #  Preenche as informações de largura e altura do SDL_Rect para que a imagem preencha toda a largura sem perder a proporção
     #      rectScreen: O SDL_Rect que será preenchido
+    #
     def stretchProporcaoLargura ( self, rectStretch ):
         rectStretch.w = self._rectWindow.w
         rectStretch.h = ( self._rectWindow.w * self._rectCanvas.h ) / self._rectCanvas.w
@@ -163,6 +185,7 @@ class PygameEngine:
     #! stretchProporcaoAltura
     #  Preenche as informações de largura e altura do SDL_Rect para que a imagem preencha toda a altura sem perder a proporção
     #      rectScreen: O SDL_Rect que será preenchido
+    #
     def stretchProporcaoAltura ( self, rectStretch ):
         rectStretch.w = ( self._rectWindow.h * self._rectCanvas.w ) / self._rectCanvas.h
         rectStretch.h = self._rectWindow.h
