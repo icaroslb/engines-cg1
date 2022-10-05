@@ -1,51 +1,56 @@
 import pygame
 from enum import Enum
 
-#! StretchCanvas
+##
+# \file PygameEngine.py
+# 
+# Arquivo da engine de criação de janela utilizando a biblioteca Pygame
+
+##
+# \package PygameEngine
+# 
+# Pacote que contém a engine PygameEngine e o enum StretchVanvas
+
+
+##
 #  Enum para comportamento da imagem na janela
 class StretchCanvas( Enum ):
-    # A imagem não é esticada
+    ## A imagem não é esticada
     NO_STRETCH     = 1
-    # A imagem é esticada até caber totalmente na janela
+    ## A imagem é esticada até caber totalmente na janela
     FULL           = 2
-    # A imagem é esticada em relação a maior borda do canvas, preservando a proporção da imagem
+    ## A imagem é esticada em relação a maior borda do canvas, preservando a proporção da imagem
     LARGER_BORDER  = 3
-    # A imagem é esticada em relação a menor borda do canvas, preservando a proporção da imagem
+    ## A imagem é esticada em relação a menor borda do canvas, preservando a proporção da imagem
     SMALLER_BORDER = 4
 
 
-#! SDLEngine
+##
 #  Classe responsável por gerenciar o SDL2
 class PygameEngine:
-    #_window;         # Janela
-    #_surfaceScreen;  # Surface da janela, onde contém a imagem que é printada
-    #_surfaceCanvas;  # Surface do canvas, copiara a imagem para o surface da janela
-    #
-    #_rectScreen;     # Informações de proporção da janela
-    #_rectCanvas;     # Informações de proporção do canvas
-    #
-    #_canvas;         # Array que contém a imagem
-    #_quantidadePix;  # Quantidade de pix que tem na imagem
-    #
-    #_scretchCanvas;  # Padrão que o canvas irá se esticar na janela
 
-    #! PygameEngine
-    #  Entrada: 
-    #      nomeJanela:    Nome que a janela terá ao ser criada
-    #      larguraJanela: Largura da janela
-    #      alturaJanela:  Altura da janela
-    #      scretchCanvas: Como a imagem se ajustará na tela
-    #      flags:         flags para a janela. Os valores podem ser:
-    #         pygame.FULLSCREEN    create a fullscreen display
-    #           pygame.DOUBLEBUF     (obsolete in pygame 2) recommended for HWSURFACE or OPENGL
-    #           pygame.HWSURFACE     (obsolete in pygame 2) hardware accelerated, only in FULLSCREEN
-    #           pygame.OPENGL        create an OpenGL-renderable display
-    #           pygame.RESIZABLE     display window should be sizeable
-    #           pygame.NOFRAME       display window will have no border or controls
-    #           pygame.SCALED        resolution depends on desktop size and scale graphics
-    #           pygame.SHOWN         window is opened in visible mode (default)
-    #           pygame.HIDDEN        window is opened in hidden mode
-    #  Inicializa o Pygame e cria a janela que mostrará a imagem renderizada.
+    ##
+    # Inicializa o Pygame e cria a janela que mostrará a imagem renderizada.
+    #
+    # \param self Ponteiro do objeto
+    # \param nomeJanela:    Nome que a janela terá ao ser criada
+    # \param larguraJanela: Largura da janela
+    # \param alturaJanela:  Altura da janela
+    # \param flags:         flags para a janela. Os valores podem ser:
+    # \n pygame.FULLSCREEN    create a fullscreen display
+    # \n pygame.DOUBLEBUF     (obsolete in pygame 2) recommended for HWSURFACE or OPENGL
+    # \n pygame.HWSURFACE     (obsolete in pygame 2) hardware accelerated, only in FULLSCREEN
+    # \n pygame.OPENGL        create an OpenGL-renderable display
+    # \n pygame.RESIZABLE     display window should be sizeable
+    # \n pygame.NOFRAME       display window will have no border or controls
+    # \n pygame.SCALED        resolution depends on desktop size and scale graphics
+    # \n pygame.SHOWN         window is opened in visible mode (default)
+    # \n pygame.HIDDEN        window is opened in hidden mode
+    # \param scretchCanvas: Como a imagem se ajustará na tela. Os valores podem ser:
+    # \n StretchCanvas.NO_STRETCH
+    # \n StretchCanvas.FULL
+    # \n StretchCanvas.LARGER_BORDER
+    # \n StretchCanvas.SMALLER_BORDER
     def __init__ ( self, nomeJanela, larguraJanela, alturaJanela, flags = 0, scretchCanvas = StretchCanvas.NO_STRETCH ):
         pygame.init()
         self._window = pygame.display.set_mode( ( larguraJanela, alturaJanela ), flags )
@@ -59,14 +64,11 @@ class PygameEngine:
         self.imagemProporcao = self._rectImagem.copy()
         self._canvas = None
 
-##*******************************************************************
-##*******************************************************************
-
-    #! atualizarCanvasPIL
-    #  Entrada: 
-    #      *novoCanvas: Array com as novas cores do canvas, com cada valor variando de 0 a 1
-    #  Atualiza as cores do canvas a partir de uma classe de imagem da bilioteca Pillow
+    ## 
+    # Atualiza as cores do canvas a partir de uma classe de imagem da bilioteca Pillow 
     #
+    # \param self Ponteiro do objeto
+    # \param novoCanvas Array com as novas cores do canvas, com cada valor variando de 0 a 255
     def atualizarCanvasPIL ( self, novoCanvas ):
         if ( self._canvas != None ):
             del self._canvas
@@ -79,19 +81,16 @@ class PygameEngine:
         or   rectCanvasAnterior.h != self._rectCanvas.h ):
             self.atualizarProporcaoImagem()
 
-##*******************************************************************
-##*******************************************************************
-
-    #! atualizarCanvasNP
-    #  Entrada: 
-    #      *novoCanvas: Array com as novas cores do canvas, com cada valor variando de 0 a 1
+    ##
     #  Atualiza as cores do canvas a partir de um array numpy
     #
+    # \param self Ponteiro do objeto
+    # \param novoCanvas: Array com as novas cores do canvas, com cada valor variando de 0 a 1
     def atualizarCanvasNP ( self, novoCanvas ):
         if ( self._canvas != None ):
             del self._canvas
         
-        self._canvas = pygame.surfarray.make_surface( novoCanvas )
+        self._canvas = pygame.surfarray.make_surface( novoCanvas * 255 )
         rectCanvasAnterior = self._rectCanvas.copy()
         self._rectCanvas = self._canvas.get_rect()
         
@@ -99,39 +98,32 @@ class PygameEngine:
         or   rectCanvasAnterior.h != self._rectCanvas.h ):
             self.atualizarProporcaoImagem()
 
-##*******************************************************************
-##*******************************************************************
-
-    #! mudarStretch
-    #  Entrada: 
-    #      scretch: Nova regra de stretch
+    ##
     #  Muda a regra de stretch
     #
+    # \param self Ponteiro do objeto
+    # \param Nova regra de stretch
     def mudarStretch ( self, scretch ):
         self._scretchCanvas = scretch
         self.atualizarProporcaoImagem()
 
-##*******************************************************************
-##*******************************************************************
-
-    #! junelaMudouTamanho
-    #  Verifica se houve algum evento de mudança de tamanho da janela e atualiza as informações da surface da janela caso haja o evento
-    #      e: SDL_Event que informará se houve o evento de mudança de tamanho da janela
+    ##
+    # Verifica se houve algum evento de mudança de tamanho da janela e atualiza as informações da surface da janela caso haja o evento
     #
-    def junelaMudouTamanho ( self, e ):
-        if e.type == pygame.VIDEORESIZE:
+    # \param self Ponteiro do objeto
+    # \param event: SDL_Event que informará se houve o evento de mudança de tamanho da janela
+    def junelaMudouTamanho ( self, event ):
+        if event.type == pygame.VIDEORESIZE:
             # There's some code to add back window content here.
-            self.window = pygame.display.set_mode( ( e.w, e.h )
+            self.window = pygame.display.set_mode( ( event.w, event.h )
                                                  , pygame.RESIZABLE )
             self._rectWindow = self._window.get_rect()
             self.atualizarProporcaoImagem()
 
-##*******************************************************************
-##*******************************************************************
-
-    #! atualizarProporcaoImagem
+    ##
     #  Calcula as proporções da imagem
     #
+    # \param self Ponteiro do objeto
     def atualizarProporcaoImagem ( self ):
         if ( self._canvas != None ):
             rectScreen = pygame.display.get_surface().get_rect()
@@ -152,12 +144,10 @@ class PygameEngine:
 
             self.imagemProporcao = self._rectImagem.copy()
 
-##*******************************************************************
-##*******************************************************************
-
-    #! atualizarJanela
+    ##
     #  Atualiza a janela
     #
+    # \param self Ponteiro do objeto
     def atualizarJanela ( self ):
         self._window.fill( ( 0.0, 0.0, 0.0 ) )
         
@@ -168,24 +158,20 @@ class PygameEngine:
         
         pygame.display.update()
 
-##*******************************************************************
-##*******************************************************************
-
-    #! stretchProporcaoLargura
+    ##
     #  Preenche as informações de largura e altura do SDL_Rect para que a imagem preencha toda a largura sem perder a proporção
-    #      rectScreen: O SDL_Rect que será preenchido
     #
+    # \param self Ponteiro do objeto
+    # \param rectScreen: O SDL_Rect que será preenchido
     def stretchProporcaoLargura ( self, rectStretch ):
         rectStretch.w = self._rectWindow.w
         rectStretch.h = ( self._rectWindow.w * self._rectCanvas.h ) / self._rectCanvas.w
 
-##*******************************************************************
-##*******************************************************************
-
-    #! stretchProporcaoAltura
+    ##
     #  Preenche as informações de largura e altura do SDL_Rect para que a imagem preencha toda a altura sem perder a proporção
-    #      rectScreen: O SDL_Rect que será preenchido
     #
+    # \param self Ponteiro do objeto
+    # \param rectScreen: O SDL_Rect que será preenchido
     def stretchProporcaoAltura ( self, rectStretch ):
         rectStretch.w = ( self._rectWindow.h * self._rectCanvas.w ) / self._rectCanvas.h
         rectStretch.h = self._rectWindow.h

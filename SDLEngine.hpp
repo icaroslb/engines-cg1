@@ -6,6 +6,11 @@
 
 #include <SDL2/SDL.h>
 
+/*! \file SDLEngine.hpp
+ * 
+ * Engine de criação de janela utilizando a biblioteca SDL2
+*/
+
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     #define R_MASK 0xff000000
     #define G_MASK 0x00ff0000
@@ -25,55 +30,69 @@
 //*******************************************************************
 //*******************************************************************
 
-/*! StretchCanvas
-**  Enum para comportamento da imagem na janela
+/*!
+ * Enum para comportamento da imagem na janela
 */
-enum class StretchCanvas
+enum StretchCanvas
 {
-    // A imagem não é esticada
-    NO_STRETCH,
-    // A imagem é esticada até caber totalmente na janela
-    FULL,
-    // A imagem é esticada em relação a maior borda do canvas, preservando a proporção da imagem
-    LARGER_BORDER,
-    // A imagem é esticada em relação a menor borda do canvas, preservando a proporção da imagem
-    SMALLER_BORDER
+    NO_STRETCH,    //!< A imagem não é esticada
+    FULL,          //!< A imagem é esticada até caber totalmente na janela
+    LARGER_BORDER, //!< A imagem é esticada em relação a maior borda do canvas, preservando a proporção da imagem
+    SMALLER_BORDER //!< A imagem é esticada em relação a menor borda do canvas, preservando a proporção da imagem
 };
 
 //*******************************************************************
 //*******************************************************************
 
-/*! SDLEngine
-**  Classe responsável por gerenciar o SDL2
+/*!
+ * Classe responsável por gerenciar o SDL2
 */
 class SDLEngine {
-    SDL_Window *_window;          // Janela
-    SDL_Surface *_surfaceScreen;  // Surface da janela, onde contém a imagem que é printada
-    SDL_Surface *_surfaceCanvas;  // Surface do canvas, copiara a imagem para o surface da janela
+    SDL_Window *_window;          //!< Janela
+    SDL_Surface *_surfaceScreen;  //!< Surface da janela, onde contém a imagem que é printada
+    SDL_Surface *_surfaceCanvas;  //!< Surface do canvas, copiara a imagem para o surface da janela
 
-    SDL_Rect *_rectScreen;        // Informações de proporção da janela
-    SDL_Rect *_rectCanvas;        // Informações de proporção do canvas
-    SDL_Rect _imagem;             // Informações de proporção da imagem
+    SDL_Rect *_rectScreen;        //!< Informações de proporção da janela
+    SDL_Rect *_rectCanvas;        //!< Informações de proporção do canvas
+    SDL_Rect _imagem;             //!< Informações de proporção da imagem
 
-    uint *_canvas;                // Array que contém a imagem
-    uint _quantidadePix;          // Quantidade de pix que tem na imagem
+    uint *_canvas;                //!< Array que contém a imagem
+    uint _quantidadePix;          //!< Quantidade de pix que tem na imagem
 
-    StretchCanvas _scretchCanvas; // Padrão que o canvas irá se esticar na janela
+    StretchCanvas _scretchCanvas; //!< Padrão que o canvas irá se esticar na janela
 
 public:
-    SDL_Rect imagemTamanho;       // Informações de proporção da imagem
-
-    /*! SDLEngine
-    **  Entrada: 
-    **      nomeJanela:    Nome que a janela terá ao ser criada
-    **      larguraJanela: Largura da janela
-    **      alturaJanela:  Altura da janela
-    **      larguraCanvas: Largura do canvas
-    **      alturaCanvas:  Altura do canvas
-    **      scretchCanvas: Como a imagem se ajustará na tela
-    **      flags:         flags para a janela. Os valores podem ser:
-    *          ::SDL_WINDOW_FULLSCREEN, ::SDL_WINDOW_OPENGL, ::SDL_WINDOW_HIDDEN, ::SDL_WINDOW_BORDERLESS, ::SDL_WINDOW_RESIZABLE, ::SDL_WINDOW_MAXIMIZED, ::SDL_WINDOW_MINIMIZED, ::SDL_WINDOW_INPUT_GRABBED, ::SDL_WINDOW_ALLOW_HIGHDPI, ::SDL_WINDOW_VULKAN.
-    **  Inicializa o SDL e cria a janela que mostrará a imagem renderizada.
+    SDL_Rect imagemTamanho;       //!< Informações de proporção da imagem
+                                  //!< 
+                                  //!< É possível utilizar campos w e h para obter respectivamente a largura e a altura da imagem renderizada.
+                                  //!<
+                                  //!< Mais informações ver na documentação <a href='https://wiki.libsdl.org/SDL_Rect'>SDL_Rect</a>
+    
+    /*!
+     * Inicializa o SDL e cria a janela que mostrará a imagem renderizada.
+     * 
+     * \param nomeJanela    Nome que a janela terá ao ser criada
+     * \param larguraJanela Largura da janela
+     * \param alturaJanela  Altura da janela
+     * \param larguraCanvas Largura do canvas
+     * \param alturaCanvas  Altura do canvas
+     * \param flags         flags para a janela. Os valores podem ser:
+     * \n ::SDL_WINDOW_FULLSCREEN
+     * \n ::SDL_WINDOW_OPENGL
+     * \n ::SDL_WINDOW_HIDDEN
+     * \n ::SDL_WINDOW_BORDERLESS
+     * \n ::SDL_WINDOW_RESIZABLE
+     * \n ::SDL_WINDOW_MAXIMIZED
+     * \n ::SDL_WINDOW_MINIMIZED
+     * \n ::SDL_WINDOW_INPUT_GRABBED
+     * \n ::SDL_WINDOW_ALLOW_HIGHDPI
+     * \n ::SDL_WINDOW_VULKAN
+     * \n Mais informações ver na documentação <a href='https://wiki.libsdl.org/SDL_WindowFlags'>SDL_WindowFlags</a>
+     * \param scretchCanvas: Como a imagem se ajustará na tela. Os valores podem ser:
+     * \n ::NO_STRETCH
+     * \n ::FULL
+     * \n ::LARGER_BORDER
+     * \n ::SMALLER_BORDER
     */
     SDLEngine( const char *nomeJanela
              , uint larguraJanela, uint alturaJanela
@@ -81,69 +100,70 @@ public:
              , uint flags = SDL_WINDOW_SHOWN
              , StretchCanvas scretchCanvas = StretchCanvas::NO_STRETCH );
     
-    /*! ~SDLEngine
-    **  Destroi o objeto, liberando a memória e desligando o SDL.
+    /*!
+     *  Destroi o objeto, liberando a memória e desligando o SDL.
     */
     ~SDLEngine ();
 
-    /*! atualizarCanvas
-    **  Entrada: 
-    **      *novoCanvas: Array com as novas cores do canvas, com cada valor variando de 0 a 1
-    **  Atualiza as cores do canvas
+    /*!
+     * Atualiza as cores do canvas
+     *
+     * \param novoCanvas Array com as novas cores do canvas, com cada valor variando de 0 a 1
     */
     template <class T>
     void atualizarCanvas ( T *novoCanvas );
 
-    /*! mudarStretch
-    **  Entrada: 
-    **      scretch: Nova regra de stretch
-    **  Muda a regra de stretch
+    /*!
+     * Muda a regra de stretch
+     *
+     * \param scretch Nova regra de stretch
     */
-    void mudarStretch (StretchCanvas scretch);
+    void mudarStretch ( StretchCanvas scretch );
 
-    /*! mudarCanvas
-    **  Entrada: 
-    **      novaLargura: Nova lagura do canvas
-    **      novaAltura: Nova altura do canvas
-    **  Muda as proporções do canvas
+    /*!
+     * Muda as proporções do canvas
+     *
+     * \param novaLargura Nova lagura do canvas
+     * \param novaAltura Nova altura do canvas
     */
     void mudarCanvas ( uint novaLargura, uint novaAltura );
 
-    /*! junelaMudouTamanho
-    **  Verifica se houve algum evento de mudança de tamanho da janela e atualiza as informações da surface da janela caso haja o evento
-    **      e: SDL_Event que informará se houve o evento de mudança de tamanho da janela
+    /*!
+     * Verifica se houve algum evento de mudança de tamanho da janela e atualiza as informações da surface da janela caso haja o evento
+     *
+     * \param event <a href='https://wiki.libsdl.org/SDL_Event'>SDL_Event</a> que informará se houve o evento de mudança de tamanho da janela 
     */
-    void junelaMudouTamanho ( const SDL_Event &e );
+    void junelaMudouTamanho ( const SDL_Event &event );
 
-    /*! atualizarJanela
-    **  Atualiza a janela
+    /*!
+     *  Atualiza a janela
     */
     void atualizarJanela ();
 
 private:
     
-    /*! stretchProporcaoLargura
-    **  Preenche as informações de largura e altura do SDL_Rect para que a imagem preencha toda a largura sem perder a proporção
+    /*!
+     *  Preenche as informações de largura e altura do SDL_Rect para que a imagem preencha toda a largura sem perder a proporção
     */
     void stretchProporcaoLargura ();
 
-    /*! stretchProporcaoAltura
-    **  Preenche as informações de largura e altura do SDL_Rect para que a imagem preencha toda a altura sem perder a proporção
+    /*!
+     *  Preenche as informações de largura e altura do SDL_Rect para que a imagem preencha toda a altura sem perder a proporção
     */
     void stretchProporcaoAltura ();
 
-    /*! stretchProporcaoAltura
-    **  Calcula as proporções da imagem
+    /*!
+     *  Calcula as proporções da imagem
     */
     void atualizarProporcaoImagem ();
 
-    /*! copiarCanvas
-    **  Faz a cópia da imagem do canvas para a janela de acordo com a regra de stretch indicada
+    /*!
+     *  Faz a cópia da imagem do canvas para a janela de acordo com a regra de stretch indicada
     */
     void copiarCanvas ();
 
-    /*! obterJanelaSurface
-    **  Atualiza as informações do surface da janela
+    /*!
+     *  Atualiza as informações do surface da janela
     */
     void atualizarJanelaSurface ();
 };
@@ -219,7 +239,7 @@ void SDLEngine::atualizarCanvas ( T *novoCanvas )
 //*******************************************************************
 //*******************************************************************
 
-void SDLEngine::mudarStretch (StretchCanvas scretch)
+void SDLEngine::mudarStretch ( StretchCanvas scretch )
 {
     _scretchCanvas = scretch;
     SDL_FillRect( _surfaceScreen, nullptr, A_MASK );
@@ -260,11 +280,11 @@ void SDLEngine::atualizarJanela ()
 //*******************************************************************
 //*******************************************************************
 
-void SDLEngine::junelaMudouTamanho ( const SDL_Event &e )
+void SDLEngine::junelaMudouTamanho ( const SDL_Event &event )
 {
-    if ( e.type == SDL_WINDOWEVENT )
+    if ( event.type == SDL_WINDOWEVENT )
     {
-        if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+        if (event.window.event == SDL_WINDOWEVENT_RESIZED)
         {
             atualizarJanelaSurface();
             SDL_FillRect( _surfaceScreen, nullptr, A_MASK );
