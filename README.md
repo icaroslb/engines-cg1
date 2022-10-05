@@ -6,4 +6,4 @@ As engines foram criadas utilizando as bibliotecas <a href='https://www.libsdl.o
 
 Na pasta _exemplos_ possui exemplos de como utilizar as engines.
 
-A documentação dos arquivos _SDLEngine.hpp_ e _PygameEngine.py_ estão disponível <a href='engines-cg1.github.io'>aqui</a>.
+A documentação dos arquivos _SDLEngine.hpp_ e _PygameEngine.py_ estão disponível <a href='https://icaroslb.github.io/engines-cg1/'>aqui</a>.
