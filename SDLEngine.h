@@ -14,6 +14,7 @@
  *  Engine em C++ utilizando SDL2.
 */
 
+// \cond
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     #define R_MASK 0xff000000
     #define G_MASK 0x00ff0000
@@ -29,6 +30,8 @@
 #define SHIFT_RED   << 0
 #define SHIFT_GREEN << 8
 #define SHIFT_BLUE  << 16
+
+// \endcond
 
 //*******************************************************************
 //*******************************************************************
