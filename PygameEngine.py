@@ -3,13 +3,14 @@ from enum import Enum
 
 ##
 # \file PygameEngine.py
+# \brief Engine em python
 # 
-# Arquivo da engine de criação de janela utilizando a biblioteca Pygame
+# Engine em python utilizando Pygame
 
 ##
 # \package PygameEngine
 # 
-# Pacote que contém a engine PygameEngine e o enum StretchVanvas
+# Pacote de gerenciamento e criação de tela utilizando Pygame
 
 
 ##

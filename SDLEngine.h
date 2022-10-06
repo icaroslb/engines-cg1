@@ -1,14 +1,17 @@
-#ifndef SDL_ENGINE_HPP
-#define SDL_ENGINE_HPP
+#ifndef SDL_ENGINE_H
+#define SDL_ENGINE_H
 
 #include <iostream>
 #include <cstring>
 
 #include <SDL2/SDL.h>
 
-/*! \file SDLEngine.hpp
- * 
- * Engine de criação de janela utilizando a biblioteca SDL2
+
+
+/*! \file SDLEngine.h
+ *  \brief Engine em C++.
+ *
+ *  Engine em C++ utilizando SDL2.
 */
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
