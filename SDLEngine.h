@@ -48,6 +48,8 @@ enum StretchCanvas
 //*******************************************************************
 
 /*!
+ * \brief Gerencia o SDL2
+ *
  * Classe responsável por gerenciar o SDL2
 */
 class SDLEngine {

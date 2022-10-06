@@ -10,11 +10,13 @@ from enum import Enum
 ##
 # \package PygameEngine
 # 
-# Pacote de gerenciamento e criação de tela utilizando Pygame
+# Pacote de gerenciamento Pygame
 
 
 ##
-#  Enum para comportamento da imagem na janela
+# \brief Enum utilizado na janela
+#
+# Enum para comportamento da imagem na janela
 class StretchCanvas( Enum ):
     ## A imagem não é esticada
     NO_STRETCH     = 1
@@ -27,7 +29,9 @@ class StretchCanvas( Enum ):
 
 
 ##
-#  Classe responsável por gerenciar o SDL2
+# \brief Gerencia o Pygame
+#
+# Classe responsável por gerenciar o Pygame
 class PygameEngine:
 
     ##
@@ -160,19 +164,19 @@ class PygameEngine:
         pygame.display.update()
 
     ##
-    #  Preenche as informações de largura e altura do SDL_Rect para que a imagem preencha toda a largura sem perder a proporção
+    # Preenche as informações de largura e altura do Rect para que a imagem preencha toda a largura sem perder a proporção
     #
     # \param self Ponteiro do objeto
-    # \param rectScreen: O SDL_Rect que será preenchido
+    # \param rectScreen: O Rect que será preenchido
     def stretchProporcaoLargura ( self, rectStretch ):
         rectStretch.w = self._rectWindow.w
         rectStretch.h = ( self._rectWindow.w * self._rectCanvas.h ) / self._rectCanvas.w
 
     ##
-    #  Preenche as informações de largura e altura do SDL_Rect para que a imagem preencha toda a altura sem perder a proporção
+    #  Preenche as informações de largura e altura do Rect para que a imagem preencha toda a altura sem perder a proporção
     #
     # \param self Ponteiro do objeto
-    # \param rectScreen: O SDL_Rect que será preenchido
+    # \param rectScreen: O Rect que será preenchido
     def stretchProporcaoAltura ( self, rectStretch ):
         rectStretch.w = ( self._rectWindow.h * self._rectCanvas.w ) / self._rectCanvas.h
         rectStretch.h = self._rectWindow.h
