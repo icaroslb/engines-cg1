@@ -1,4 +1,4 @@
-#include "../SDLEngine.hpp"
+#include "../SDLEngine.h"
 
 #define LARGURA_TELA 500
 #define ALTURA_TELA  500
