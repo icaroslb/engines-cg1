@@ -10,8 +10,7 @@ int main ( void )
     SDLEngine sdlEngine{ "Teste"
                        , LARGURA_TELA, ALTURA_TELA
                        , LARGURA_CANVAS, ALTURA_CANVAS
-                       , StretchCanvas::SMALLER_BORDER
-                       ,  };
+                       };
     float testeArray[LARGURA_CANVAS * ALTURA_CANVAS * 3];
 
     SDL_Event e;
